@@ -5,6 +5,11 @@ contract Admin {
     constructor(address _admin) {
         admin=_admin;
     }
+    
+    event ModifiedUniversity(address indexed oldaddress,address indexed newaddress);
+    event NewAdmin(address indexed newadmin);
+    
+
     // Universitieslist an Array of addresses of all universities created
     address[] public universitieslist;
     //number of universities 
@@ -34,6 +39,7 @@ contract Admin {
         uint256 _id = find(_universityaddr);
         if(found) {
         universitieslist[_id] = _newaddr;
+        emit ModifiedUniversity(_universityaddr, _newaddr);
         }
     }
     /*DeleteUniversity function is to delete universities from an array of containing all universities addresses named as
@@ -46,6 +52,7 @@ contract Admin {
          universitieslist[_id]=universitieslist[universities-1];
          universitieslist[universities-1]=temp;
          universitieslist.pop();
+         universities=universitieslist.length;
         }
     }
      
@@ -57,8 +64,10 @@ contract Admin {
     function RenounceAdmin(address _newadmin) public OnlyAdmin {
         require(_newadmin!=address(0),"Address must not be Zero address");
         admin = _newadmin;
+        emit NewAdmin(_newadmin);
     }
      
+      /* find function is actually an internal function which is to traverse the universitieslist  */
      function find(address _addr) internal returns(uint256) {
         for(uint256 i=0;i<universities;i++){
             if(universitieslist[i]==_addr){
