@@ -41,12 +41,20 @@ contract University {
      courseslist[_courseID]=Course(_courseID,_coursename,STATUS.CREATED);
      courses++;
     }
-    /*UpdateCourseStatus function is to update Course status by entering CourseID and number representing
-     status where CREATED=0,RUNNING=1,SUSPENDED=2, which is only authorized by University Authorized Person */
-    function updateCourseStatus(uint256 _courseID,STATUS _status) public OnlyUAP {
+    /*SuspendCourse function is to update Course status by entering CourseID which is only authorized
+     by University Authorized Person */
+    function SuspendCourse(uint256 _courseID) public OnlyUAP {
         uint256 _id = findCourse(_courseID);
         if(found){
-            courseslist[_id].status=_status;
+            courseslist[_id].status=STATUS.SUSPENDED;
+        }
+    }
+    /*RunCourse function is to update Course status by entering CourseID which is only authorized
+     by University Authorized Person */
+    function RunCourse(uint256 _courseID) public OnlyUAP {
+        uint256 _id = findCourse(_courseID);
+        if(found){
+            courseslist[_id].status=STATUS.RUNNING;
         }
     }
     /*createStudent function is to create Students by entering StudentID and CourseID, which is only
