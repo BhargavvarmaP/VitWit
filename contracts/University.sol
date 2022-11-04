@@ -24,8 +24,6 @@ contract University {
     uint256 internal courses;
     //students represents total number of students
     uint256 internal students;
-    //tracing variable for courseID/studentID
-    bool internal found;
     //enumeration list of status comprising values called CREATED,RUNNING,SUSPENDED
     enum STATUS{CREATED,RUNNING,SUSPENDED}
     
@@ -44,28 +42,19 @@ contract University {
     /*SuspendCourse function is to update Course status by entering CourseID which is only authorized
      by University Authorized Person */
     function SuspendCourse(uint256 _courseID) public OnlyUAP {
-        uint256 _id = findCourse(_courseID);
-        if(found){
-            courseslist[_id].status=STATUS.SUSPENDED;
-        }
+            courseslist[_courseID].status=STATUS.SUSPENDED;
     }
     /*RunCourse function is to update Course status by entering CourseID which is only authorized
      by University Authorized Person */
     function RunCourse(uint256 _courseID) public OnlyUAP {
-        uint256 _id = findCourse(_courseID);
-        if(found){
-            courseslist[_id].status=STATUS.RUNNING;
-        }
+            courseslist[_courseID].status=STATUS.RUNNING;
     }
     /*createStudent function is to create Students by entering StudentID and CourseID, which is only
      authorized by University Authorized Person */
     function CreateStudent(uint256 _studentID,uint256 _courseID) public OnlyUAP {
-         uint256 _id=findCourse(_courseID);
-         require(courseslist[_id].status==STATUS.RUNNING,"This is not Running Course");
-         if(found){
+         require(courseslist[_courseID].status==STATUS.RUNNING,"This is not Running Course");
          studentlist[_studentID]=Student(_studentID,_courseID);
          students++;
-         }
     }
     /*ViewStudent function is to display StudentID and CourseID by entering StudentID */
     function ViewStudent(uint256 _studentID) public view returns(Student memory) {
@@ -75,42 +64,14 @@ contract University {
     /*DeleteStudent function is to delete Students by entering StudentID, which is only
      authorized by University Authorized Person */
     function DeleteStudent(uint256 _studentID) public OnlyUAP {
-        uint256  _id = findStudent(_studentID);
-        if(found){
-        delete studentlist[_id];
+        delete studentlist[_studentID];
         students--;
-        }
+        
     }
     /*RenounceUAP function is to change the University Authorized Person  by entering new UAP address, which is only
      authorized by University Authorized Person */
     function RenounceUAP(address _newUAP) public OnlyUAP{
           require(_newUAP!=address(0),"Address must not be Zero Address");
           UAP=_newUAP;
-    }
-    /*findCourse function is to find CourseID by traversing courseslist */
-    function findCourse(uint256 _ID) internal returns(uint256) {
-        for(uint256 i=0;i<courses;i++){
-           if(courseslist[i].courseID==_ID){
-               return i;
-               found=true;
-               break;
-           }
-           else{
-               found=false;
-           }
-        }
-    }
-    /*findStudent function is to find StudentID by traversing Studentlist */
-    function findStudent(uint256 _ID) internal returns(uint256) {
-          for(uint256 i=0;i<students;i++){
-           if(studentlist[i].studentID==_ID){
-               return i;
-               found=true;
-               break;
-           }
-           else{
-               found=false;
-           }
-        }
     }
 }
